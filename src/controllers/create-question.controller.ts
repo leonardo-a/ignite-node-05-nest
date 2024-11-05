@@ -1,5 +1,7 @@
 import { Controller, HttpCode, Post, UseGuards } from '@nestjs/common'
+import { CurrentUser } from 'src/auth/current-user.decorator'
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard'
+import { UserPayload } from 'src/auth/jwt.strategy'
 import { PrismaService } from 'src/prisma/prisma.service'
 
 @Controller('/questions')
@@ -9,7 +11,9 @@ export class CreateQuestionController {
 
   @Post()
   @HttpCode(201)
-  async handle() {
-    return 'ok'
+  async handle(@CurrentUser() user: UserPayload) {
+    return {
+      user,
+    }
   }
 }
