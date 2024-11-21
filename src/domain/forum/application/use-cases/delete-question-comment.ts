@@ -1,8 +1,9 @@
-/* eslint-disable @typescript-eslint/ban-types */
+import { Injectable } from '@nestjs/common'
+
 import { type Either, left, right } from '@/core/either'
-import type { QuestionCommentsRepository } from '../repositories/question-comments-repository'
-import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
 import { NotAllowedError } from '@/core/errors/errors/not-allowed-error'
+import { ResourceNotFoundError } from '@/core/errors/errors/resource-not-found-error'
+import { QuestionCommentsRepository } from '../repositories/question-comments-repository'
 
 interface DeleteQuestionCommentUseCaseRequest {
   questionCommentId: string
@@ -14,6 +15,7 @@ type DeleteQuestionCommentUseCaseResponse = Either<
   null
 >
 
+@Injectable()
 export class DeleteQuestionCommentUseCase {
   constructor(private questionCommentsRepository: QuestionCommentsRepository) {}
 
