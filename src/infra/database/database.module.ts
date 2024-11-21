@@ -55,6 +55,7 @@ import { PrismaStudentsRepository } from './prisma/repositories/prisma-students-
     QuestionAttachmentsRepository,
     QuestionCommentsRepository,
     AnswersRepository,
+    AnswerCommentsRepository,
     AnswerAttachmentsRepository,
     QuestionCommentsRepository,
   ],
