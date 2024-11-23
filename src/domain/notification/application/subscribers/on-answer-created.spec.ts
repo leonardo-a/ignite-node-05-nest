@@ -14,11 +14,15 @@ import {
 } from '../use-cases/send-notification'
 import { OnAnswerCreated } from './on-answer-created'
 import { waitFor } from 'test/utils/wait-for'
+import { InMemoryAttachmentsRepository } from 'test/repositories/in-memory-attachments-repository'
+import { InMemoryStudentsRepository } from 'test/repositories/in-memory-students-repository'
 
 let inMemoryAnswersRepository: InMemoryAnswersRepository
 let inMemoryAnswersAttachmentsRepository: InMemoryAnswerAttachmentsRepository
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
 let inMemoryQuestionAttachmentsRepository: InMemoryQuestionAttachmentsRepository
+let inMemoryAttachmentsRepository: InMemoryAttachmentsRepository
+let inMemoryStudentsRepository: InMemoryStudentsRepository
 let inMemoryNotificationsRepository: InMemoryNotificationsRepository
 let sendNotificationUseCase: SendNotificationUseCase
 
@@ -30,11 +34,16 @@ let sendNotificationExecuteSpy: MockInstance<
 
 describe('On Answer Created Subscriber', () => {
   beforeEach(() => {
+    inMemoryStudentsRepository = new InMemoryStudentsRepository()
+
+    inMemoryAttachmentsRepository = new InMemoryAttachmentsRepository()
+
     inMemoryAnswersAttachmentsRepository =
       new InMemoryAnswerAttachmentsRepository()
 
     inMemoryAnswersRepository = new InMemoryAnswersRepository(
       inMemoryAnswersAttachmentsRepository,
+      inMemoryStudentsRepository,
     )
 
     inMemoryQuestionAttachmentsRepository =
@@ -42,6 +51,8 @@ describe('On Answer Created Subscriber', () => {
 
     inMemoryQuestionsRepository = new InMemoryQuestionsRepository(
       inMemoryQuestionAttachmentsRepository,
+      inMemoryAttachmentsRepository,
+      inMemoryStudentsRepository,
     )
 
     inMemoryNotificationsRepository = new InMemoryNotificationsRepository()

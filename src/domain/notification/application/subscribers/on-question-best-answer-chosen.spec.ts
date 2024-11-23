@@ -14,11 +14,15 @@ import {
   SendNotificationUseCaseResponse,
 } from '../use-cases/send-notification'
 import { OnQuestionBestAnswerChosen } from './on-question-best-answer-chosen'
+import { InMemoryStudentsRepository } from 'test/repositories/in-memory-students-repository'
+import { InMemoryAttachmentsRepository } from 'test/repositories/in-memory-attachments-repository'
 
 let inMemoryAnswersRepository: InMemoryAnswersRepository
 let inMemoryAnswersAttachmentsRepository: InMemoryAnswerAttachmentsRepository
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository
 let inMemoryQuestionAttachmentsRepository: InMemoryQuestionAttachmentsRepository
+let inMemoryAttachmentsRepository: InMemoryAttachmentsRepository
+let inMemoryStudentsRepository: InMemoryStudentsRepository
 let inMemoryNotificationsRepository: InMemoryNotificationsRepository
 let sendNotificationUseCase: SendNotificationUseCase
 
@@ -30,11 +34,16 @@ let sendNotificationExecuteSpy: MockInstance<
 
 describe('On Question Best Answer Chosen Subscriber', () => {
   beforeEach(() => {
+    inMemoryStudentsRepository = new InMemoryStudentsRepository()
+
+    inMemoryAttachmentsRepository = new InMemoryAttachmentsRepository()
+
     inMemoryAnswersAttachmentsRepository =
       new InMemoryAnswerAttachmentsRepository()
 
     inMemoryAnswersRepository = new InMemoryAnswersRepository(
       inMemoryAnswersAttachmentsRepository,
+      inMemoryStudentsRepository,
     )
 
     inMemoryQuestionAttachmentsRepository =
@@ -42,6 +51,8 @@ describe('On Question Best Answer Chosen Subscriber', () => {
 
     inMemoryQuestionsRepository = new InMemoryQuestionsRepository(
       inMemoryQuestionAttachmentsRepository,
+      inMemoryAttachmentsRepository,
+      inMemoryStudentsRepository,
     )
 
     inMemoryNotificationsRepository = new InMemoryNotificationsRepository()
