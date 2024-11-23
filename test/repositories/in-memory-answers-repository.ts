@@ -3,12 +3,15 @@ import type { PaginationParams } from '@/core/repositories/pagination-params'
 import { AnswerAttachmentsRepository } from '@/domain/forum/application/repositories/answer-attachments-repository'
 import { AnswersRepository } from '@/domain/forum/application/repositories/answers-repository'
 import type { Answer } from '@/domain/forum/enterprise/entities/answer'
+import { InMemoryStudentsRepository } from './in-memory-students-repository'
+import { AnswerWithAuthor } from '@/domain/forum/enterprise/entities/value-objects/answer-with-author'
 
 export class InMemoryAnswersRepository implements AnswersRepository {
   public items: Answer[] = []
 
   constructor(
     private answerAttachmentsRepository: AnswerAttachmentsRepository,
+    private studentsRepository: InMemoryStudentsRepository,
   ) {}
 
   async create(answer: Answer) {
@@ -35,6 +38,37 @@ export class InMemoryAnswersRepository implements AnswersRepository {
     const answers = this.items
       .filter((item) => item.questionId.toString() === questionId)
       .slice((page - 1) * 20, page * 20)
+
+    return answers
+  }
+
+  async findManyByQuestionIdWithAuthor(
+    questionId: string,
+    { page }: PaginationParams,
+  ) {
+    const answers = this.items
+      .filter((item) => item.questionId.toString() === questionId)
+      .slice((page - 1) * 20, page * 20)
+      .map((answer) => {
+        const author = this.studentsRepository.items.find((student) =>
+          student.id.equals(answer.authorId),
+        )
+
+        if (!author) {
+          throw new Error(
+            `Author with ID '${answer.authorId.toString()}' does not exists.`,
+          )
+        }
+
+        return AnswerWithAuthor.create({
+          answerId: answer.id,
+          author: author.name,
+          authorId: answer.authorId,
+          content: answer.content,
+          createdAt: answer.createdAt,
+          updatedAt: answer.updatedAt,
+        })
+      })
 
     return answers
   }
