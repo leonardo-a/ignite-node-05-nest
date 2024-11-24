@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt'
 import { Test } from '@nestjs/testing'
 import request from 'supertest'
 
+import { DomainEvents } from '@/core/events/domain-events'
 import { AppModule } from '@/infra/app.module'
 import { DatabaseModule } from '@/infra/database/database.module'
 import { PrismaService } from '@/infra/database/prisma/prisma.service'
@@ -30,6 +31,8 @@ describe('On Answer Created (E2E)', () => {
     questionFactory = moduleRef.get(QuestionFactory)
     jwt = moduleRef.get(JwtService)
 
+    DomainEvents.shouldRun = true
+
     await app.init()
   })
 
@@ -44,7 +47,7 @@ describe('On Answer Created (E2E)', () => {
 
     const questionId = question.id.toString()
 
-    const response = await request(app.getHttpServer())
+    await request(app.getHttpServer())
       .post(`/questions/${questionId}/answers`)
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
